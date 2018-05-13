@@ -86,13 +86,9 @@ VehicleCommand QuadControl::GenerateMotorCommands(float collThrustCmd, V3F momen
 //  cmd.desiredThrustsN[1] = CONSTRAIN(cmd.desiredThrustsN[1],minMotorThrust,maxMotorThrust);
 //  cmd.desiredThrustsN[2] = CONSTRAIN(cmd.desiredThrustsN[2],minMotorThrust,maxMotorThrust);
 //  cmd.desiredThrustsN[3] = CONSTRAIN(cmd.desiredThrustsN[3],minMotorThrust,maxMotorThrust);
-//  cmd.desiredThrustsN[0] = CONSTRAIN(cmd.desiredThrustsN[0],-maxMotorThrust,maxMotorThrust);
-//  cmd.desiredThrustsN[1] = CONSTRAIN(cmd.desiredThrustsN[1],-maxMotorThrust,maxMotorThrust);
-//  cmd.desiredThrustsN[2] = CONSTRAIN(cmd.desiredThrustsN[2],-maxMotorThrust,maxMotorThrust);
-//  cmd.desiredThrustsN[3] = CONSTRAIN(cmd.desiredThrustsN[3],-maxMotorThrust,maxMotorThrust);
 //  std::cout<<momentCmd[0]<<" "<<momentCmd[1]<<" "<<momentCmd[2]<<std::endl;
-//  std::cout<< cmd.desiredThrustsN[0]<<" "<<cmd.desiredThrustsN[1]<<" "<<cmd.desiredThrustsN[2]<<" "<<cmd.desiredThrustsN[3]<<std::endl;
-//  std::cout<<"Roll:"<<this->estAtt.Roll()<<"Omega P:"<<this->estOmega.x<<std::endl;
+  //std::cout<< cmd.desiredThrustsN[0]<<" "<<cmd.desiredThrustsN[1]<<" "<<cmd.desiredThrustsN[2]<<" "<<cmd.desiredThrustsN[3]<<std::endl;
+  //std::cout<<"Roll:"<<this->estAtt.Roll()<<"Omega P:"<<this->estOmega.x<<std::endl;
 
 
   /////////////////////////////// END STUDENT CODE ////////////////////////////
@@ -193,9 +189,11 @@ float QuadControl::AltitudeControl(float posZCmd, float velZCmd, float posZ, flo
   float thrust = 0;
 
   ////////////////////////////// BEGIN STUDENT CODE ///////////////////////////
-  float accel_z_cmd = kpPosZ*(posZCmd - posZ) + kpVelZ *(velZCmd-velZ)+ accelZCmd;
-  accel_z_cmd = CONSTRAIN(accel_z_cmd,-maxDescentRate,maxAscentRate);
-  thrust = (mass * 9.81 - mass * accel_z_cmd)/R(2,2);
+  integratedAltitudeError += (posZCmd - posZ)*dt;
+  velZCmd = CONSTRAIN(velZCmd,-maxDescentRate,maxAscentRate);
+  float accel_z_cmd = kpPosZ*(posZCmd - posZ) + kpVelZ *(velZCmd-velZ)+ KiPosZ*integratedAltitudeError+accelZCmd;
+  thrust = mass * (9.81 - accel_z_cmd)/R(2,2);
+
 
   //std::cout<<"z_dot_dot: " << accel_z_cmd<<" posz:"<<posZ<<std::endl;
 
