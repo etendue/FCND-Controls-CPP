@@ -82,14 +82,6 @@ VehicleCommand QuadControl::GenerateMotorCommands(float collThrustCmd, V3F momen
   cmd.desiredThrustsN[2] = (c_bar + p_bar - q_bar + r_bar)/4.f; // rear left
   cmd.desiredThrustsN[3] = (c_bar - p_bar - q_bar - r_bar)/4.f; // rear right
 
-//  cmd.desiredThrustsN[0] = CONSTRAIN(cmd.desiredThrustsN[0],minMotorThrust,maxMotorThrust);
-//  cmd.desiredThrustsN[1] = CONSTRAIN(cmd.desiredThrustsN[1],minMotorThrust,maxMotorThrust);
-//  cmd.desiredThrustsN[2] = CONSTRAIN(cmd.desiredThrustsN[2],minMotorThrust,maxMotorThrust);
-//  cmd.desiredThrustsN[3] = CONSTRAIN(cmd.desiredThrustsN[3],minMotorThrust,maxMotorThrust);
-//  std::cout<<momentCmd[0]<<" "<<momentCmd[1]<<" "<<momentCmd[2]<<std::endl;
-  //std::cout<< cmd.desiredThrustsN[0]<<" "<<cmd.desiredThrustsN[1]<<" "<<cmd.desiredThrustsN[2]<<" "<<cmd.desiredThrustsN[3]<<std::endl;
-  //std::cout<<"Roll:"<<this->estAtt.Roll()<<"Omega P:"<<this->estOmega.x<<std::endl;
-
 
   /////////////////////////////// END STUDENT CODE ////////////////////////////
 
@@ -194,9 +186,6 @@ float QuadControl::AltitudeControl(float posZCmd, float velZCmd, float posZ, flo
   float accel_z_cmd = kpPosZ*(posZCmd - posZ) + kpVelZ *(velZCmd-velZ)+ KiPosZ*integratedAltitudeError+accelZCmd;
   thrust = mass * (9.81 - accel_z_cmd)/R(2,2);
 
-
-  //std::cout<<"z_dot_dot: " << accel_z_cmd<<" posz:"<<posZ<<std::endl;
-
   /////////////////////////////// END STUDENT CODE ////////////////////////////
   
   return thrust;
@@ -230,8 +219,6 @@ V3F QuadControl::LateralPositionControl(V3F posCmd, V3F velCmd, V3F pos, V3F vel
   velCmd.constrain(-maxSpeedXY,maxSpeedXY);
   accelCmd = kpPosXY * (posCmd - pos) + kpVelXY *(velCmd - vel);
   accelCmd.constrain(-maxAccelXY,maxAccelXY);
-  //std::cout<< "x_target:"<<posCmd.x<<" x_pos:"<<pos.x<<" x_vel:"<<vel.x<<" x_dot_dot_cmd:"<<accelCmd.x<<std::endl;
-
 
   /////////////////////////////// END STUDENT CODE ////////////////////////////
 
@@ -254,8 +241,6 @@ float QuadControl::YawControl(float yawCmd, float yaw)
   float yawRateCmd=0;
   ////////////////////////////// BEGIN STUDENT CODE ///////////////////////////
   yawRateCmd = kpYaw *( fmod(yawCmd - yaw,2*M_PI));
-
-  //std::cout<<"yaw:"<<yaw<<" yawRate_cmd:"<<yawRateCmd<<std::endl;
 
   /////////////////////////////// END STUDENT CODE ////////////////////////////
 
