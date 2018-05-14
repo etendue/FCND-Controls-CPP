@@ -18,27 +18,28 @@
 
 ---
 ### Writeup
-The whole C++ code implementing controll function is contained in source file `QuadController.cpp`, and the tuned parameters are contained in text file `QuadControlParams.txt`. In following text the source source file and parameter file refer to above mentioned files.
+The whole C++ code implementing controll function is contained in source file `QuadController.cpp`, and the tuned parameters are contained in text file `QuadControlParams.txt`. In following text the source file and parameter file refer to above mentioned files.
 
 #### Control Architecture
-The project is based on mainly the control architecture [Figure1] from lesson with small adapation to input/output as well as to parameter conventions.
-![Overall Control Achitecture from Lesson](./animations/control2.png)
-![Attitude Control from Lesson](./animations/control1.png)
-*Figure1: Control Architecutre from Lesson*
+The control architecture is mainly based on architecture from lesson with small adaptation to input/output as well as to parameter conventions.
 
-Here is the achitecture [Figure2] used in this project. The changes are explained in details by affected rubric points.
+Here is the achitecture used in this project. The changes are explained in details by affected rubric points.
 
 ![Overall Control Achitecture for Project](./animations/control2p.png)
+*Figure 1: Overall Control Architecture*
+
 ![Attitude Control for Project](./animations/control1p.png)
-*Figure2: Control Architecutre for Project*
+*Figure 2: Attitude Control*
 
 
 #### 1. Implemented body rate control in C++. The controller should be a proportional controller on body rates to commanded moments. The controller should take into account the moments of inertia of the drone when calculating the commanded moments.
 
-Body rate control is a propotional controller to instant detected error of reference value to measured value. See code `line 95 - 115` in function:
+Body rate control is a propotional controller to instant detected error of reference value to measured value. See source code `line 95 - 115` in function:
 ```
 V3F QuadControl::BodyRateControl(V3F pqrCmd, V3F pqr)
+
 ```
+
 
 $Error_{\text{pqr}} or $\dot{p}\dot{p}\dot{r} is a angle acceleration in body frame. The output of  is required moment command for roll, pitch and yaw in body frame. So the  $\Error_{\text{pqr}} is multiplied by moment of inertia $I_{\text{xyz}}$. $I_{\text{xyz}}$ is read from parameter file `Ixx, Iyy,Izz`. The final output is $moment_cmd_{\text{pqr}}$ in body frame:
 
@@ -48,7 +49,7 @@ $$moment_cmd_{\text{pqr}} = Error_{\text{pqr}} |times I_{\text{xyz}}$$
 
 #### 2. Implement roll pitch control in C++. The controller should use the acceleration and thrust commands, in addition to the vehicle attitude to output a body rate command. The controller should account for the non-linear transformation from local accelerations to body rates. Note that the drone's mass should be accounted for when calculating the target angles.
 
-Roll pitch control is a propotional controller to instant detected error of reference value to measured value. See code `line 118 - 158` in function:
+Roll pitch controller is a propotional controller to instant detected error of reference value to measured value. See source code `line 118 - 158` in function:
 ```
 V3F QuadControl::RollPitchControl(V3F accelCmd, Quaternion<float> attitude, float collThrustCmd)
 ```
@@ -72,11 +73,11 @@ $\dot{b}^y_c  = k_p(b^y_c - b^y_a)$
 \end{align}
 $$
 
-Besides of applying the equation, one hint must be taken care, the $c is converted from collective thrust divided by mass, since body frame has also $z direction downwards, the thrust is however is measured upwards, $c value must be negated. 
+Besides of applying the equation, one hint must be taken care of, the $c$ is converted from collective thrust divided by `mass`, since body frame has $z$ direction downwards, the thrust is however is measured upwards, $c$ value must be negated. 
 
 #### 3. Implement altitude controller in C++. The controller should use both the down position and the down velocity to command thrust. Ensure that the output value is indeed thrust (the drone's mass needs to be accounted for) and that the thrust includes the non-linear effects from non-zero roll/pitch angles. Additionally, the C++ altitude controller should contain an integrator to handle the weight non-idealities presented in scenario 4.
 
-Altitude controler is a *PID* controller. See code `line 160 - 192` in function:
+Altitude controler is a *PID* controller. See source code `line 160 - 192` in function:
 ```
 float QuadControl::AltitudeControl(float posZCmd, float velZCmd, float posZ, float velZ, Quaternion<float> attitude, float accelZCmd, float dt)
 ```
@@ -134,7 +135,7 @@ VehicleCommand QuadControl::GenerateMotorCommands(float collThrustCmd, V3F momen
 
 This depends on the layerout of rotors/frames and rotation direction. The starter code provides some hint on layout of motors as [Figure 3].
 
-![Figure 3, drone frame layout]()
+![Figure 3, drone frame layout](./animations/Drone1p.png)
 
 but the rotation of motors are not given. So there are 2 possibility and the corresponding matrix for distributing thrust is as following, which only affects the moment for yaw rate.
 
@@ -182,7 +183,7 @@ $\begin{pmatrix} 1 & 1 & 1 & -1 \\ 1 & -1 & 1 & 1 \\ 1 & 1 & -1 & 1\\ 1 & 1 & -1
 #### 7. Your C++ controller is successfully able to fly the provided test trajectory and visually passes inspection of the scenarios leading up to the test trajectory. Ensure that in each scenario the drone looks stable and performs the required task. Specifically check that the student's controller is able to handle the non-linearities of scenario 4 (all three drones in the scenario should be able to perform the required task with the same control gains used).
 
 The controller with applied parameter passes all the scenarios. Here is the figure of scenario 5.
-![Follow trajectory]()
+![Follow trajectory](./animations/my_scenario5.gif)
 
 
 #### 8. Provide a Writeup / README that includes all the rubric points and how you addressed each one.  You can submit your writeup as markdown or pdf.  
