@@ -144,9 +144,9 @@ V3F QuadControl::RollPitchControl(V3F accelCmd, Quaternion<float> attitude, floa
   float R13 = R(0,2);
   float R23 = R(1,2);
   float R33 = R(2,2);
-  float accel_z  = -collThrustCmd/mass -  9.81;
-  float b_x_c_dot = this->kpBank * (accelCmd[0] / accel_z - R13);
-  float b_y_c_dot = this->kpBank * (accelCmd[1] / accel_z - R23);
+  float c  = -collThrustCmd/mass;
+  float b_x_c_dot = this->kpBank * (accelCmd[0] / c - R13); //accelCmd[0]/c = b_x_c
+  float b_y_c_dot = this->kpBank * (accelCmd[1] / c - R23); //accelCmd[1]/c = b_y_c
   pqrCmd[0] = (R21*b_x_c_dot - R11*b_y_c_dot)/R33;
   pqrCmd[1] = (R22*b_x_c_dot - R12*b_y_c_dot)/R33;
   pqrCmd[2] = 0.f;
